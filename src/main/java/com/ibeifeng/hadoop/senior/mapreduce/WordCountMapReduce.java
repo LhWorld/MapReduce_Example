@@ -44,7 +44,7 @@ public class WordCountMapReduce extends Configured implements Tool{
 			
 			// split
 			// String[] strs = lineValue.split(" ");
-			StringTokenizer stringTokenizer = new StringTokenizer(lineValue);//默认
+			StringTokenizer stringTokenizer = new StringTokenizer(lineValue);//默认按照空格换行等分割字符串，并且不消耗内存
 			
 			// iterator
 			while(stringTokenizer.hasMoreTokens()){
