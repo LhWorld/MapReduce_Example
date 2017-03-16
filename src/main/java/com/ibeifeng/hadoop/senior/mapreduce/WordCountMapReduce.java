@@ -71,18 +71,18 @@ public class WordCountMapReduce extends Configured implements Tool{
 		
 		@Override
 		public void reduce(Text key, Iterable<IntWritable> values,
-				Context context) throws IOException, InterruptedException {
-			// sum tmp
-			int sum= 0 ;
-			// iterator
-			for(IntWritable value: values){
-				// total
-				sum += value.get();
-			}
-			// set value
-			outputValue.set(sum);
-			
-			// output
+		Context context) throws IOException, InterruptedException {
+				// sum tmp
+				int sum= 0 ;
+				// iterator
+				for(IntWritable value: values){
+					// total
+					sum += value.get();
+				}
+				// set value
+				outputValue.set(sum);
+
+				// output
 			context.write(key, outputValue);
 		}
 
