@@ -20,7 +20,7 @@ public class HdfsApp {
 
 	/**
 	 * Get FileSystem
-	 * 
+	 * dwefwe
 	 * @return
 	 * @throws Exception
 	 */
