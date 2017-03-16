@@ -77,7 +77,7 @@ public class PaiWritable implements WritableComparable<PaiWritable> {
 
 	public void write(DataOutput out) throws IOException {
 		out.writeInt(id);
-		out.writeUTF(name);
+		out.writeUTF(name);//String的序列化
 	}
 
 	public void readFields(DataInput in) throws IOException {
@@ -93,7 +93,7 @@ public class PaiWritable implements WritableComparable<PaiWritable> {
 		//
 		if(0 != comp){
 			return comp ;
-		}
+		}//如果第一个字段不相等再比较第二个字段
 		
 		// compare name
 		return this.getName().compareTo(o.getName());
