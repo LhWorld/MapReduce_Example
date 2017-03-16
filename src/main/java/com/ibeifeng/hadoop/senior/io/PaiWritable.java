@@ -93,7 +93,7 @@ public class PaiWritable implements WritableComparable<PaiWritable> {
 		//
 		if(0 != comp){
 			return comp ;
-		}//如果第一个字段不相等再比较第二个字段
+		}//如果第一个字段不相等再比较第二个 字段
 		
 		// compare name
 		return this.getName().compareTo(o.getName());
