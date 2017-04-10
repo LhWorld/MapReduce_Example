@@ -138,10 +138,10 @@ public class Sort {
 
         //设置输入和输出目录
 
-        FileInputFormat.addInputPath(job, new Path("/test/b.txt"));
+        FileInputFormat.addInputPath(job, new Path("/score/"));
         Random random=new Random();
         int r=random.nextInt(100000);
-        FileOutputFormat.setOutputPath(job, new Path("/test/"+r+""));
+        FileOutputFormat.setOutputPath(job, new Path("/scoreResult/"+r+""));
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
 
