@@ -33,7 +33,7 @@ public class Sort {
 
     public static class Map extends Mapper<Object, Text, IntWritable, IntWritable> {
 
-
+        private static final Logger logger = LoggerFactory.getLogger(Map.class);
         private static IntWritable data = new IntWritable();
 
 
@@ -46,8 +46,10 @@ public class Sort {
             String line = value.toString();
 
             data.set(Integer.parseInt(line));
-
             context.write(data, new IntWritable(1));
+            logger.info("-------map阶段Key----------"+ key+"");
+            logger.info("-------map阶段Value----------"+ value+"");
+
 
         }
 
@@ -65,7 +67,7 @@ public class Sort {
 
             Reducer<IntWritable, IntWritable, IntWritable, IntWritable> {
 
-
+        public static final Logger logger = LoggerFactory.getLogger(Reduce.class);
         private static IntWritable linenum = new IntWritable(1);
 
 
@@ -73,13 +75,16 @@ public class Sort {
 
         public void reduce(IntWritable key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
-            logger.info("---------enter reduce function flag---------");
-
+           logger.info("---------reduce阶段--------");
+            logger.info("-------Iterable<IntWritable> values----------"+values);
             for (IntWritable val : values) {
 
                 context.write(linenum, key);
-
+                logger.info("-----reduce阶段--linenum----------"+linenum+"");
+                logger.info("----reduce阶段--key----"+key+"");
                 linenum = new IntWritable(linenum.get() + 1);
+
+
 
             }
 
@@ -93,8 +98,9 @@ public class Sort {
     public static void main(String[] args) throws Exception {
 
         Configuration conf = new Configuration();
-
+        conf.set("fs.defaultFS", "hdfs://lihu");
         conf.set("mapreduce.framework.name", "yarn");
+        conf.set("ha.zookeeper.quorum", "node1:2181,node2:2181,node3:2181");
         conf.set("yarn.resourcemanager.address", "node2:8032");
         conf.set("mapred.jar", "D:\\HDFS\\classes\\artifacts\\beifeng_hdfs_jar\\beifeng-hdfs.jar");
         conf.set("mapreduce.app-submission.cross-platform", "true");
@@ -110,7 +116,6 @@ public class Sort {
             System.exit(2);
 
         }
-
 
         Job job = new Job(conf, "Data Sort");
 
@@ -135,17 +140,11 @@ public class Sort {
 
         FileInputFormat.addInputPath(job, new Path("/test/b.txt"));
         Random random=new Random();
-        int r=random.nextInt(100);
+        int r=random.nextInt(100000);
         FileOutputFormat.setOutputPath(job, new Path("/test/"+r+""));
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
 
-    }
-    @Test
-    public void test(){
-        Random random=new Random();
-        int r=random.nextInt(100);
-        logger.debug(r+"");
     }
 
 }
