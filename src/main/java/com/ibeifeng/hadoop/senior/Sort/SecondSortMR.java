@@ -114,7 +114,7 @@ public class SecondSortMR extends Configured  implements Tool {
         job.setJarByClass(SecondSortMR.class);
 
         FileInputFormat.addInputPath(job, new Path("/test/a.txt")); //设置map输入文件路径
-        FileOutputFormat.setOutputPath(job, new Path("/test/result.txt")); //设置reduce输出文件路径
+        FileOutputFormat.setOutputPath(job, new Path("/test/resul.txt")); //设置reduce输出文件路径
 
         job.setMapperClass(SortMapper.class);
         job.setReducerClass(SortReducer.class);
