@@ -47,6 +47,7 @@ public class Sort {
 
             data.set(Integer.parseInt(line));
             context.write(data, new IntWritable(1));
+            logger.info("-------map阶段Data----------"+ data+"");
             logger.info("-------map阶段Key----------"+ key+"");
             logger.info("-------map阶段Value----------"+ value+"");
 
@@ -75,14 +76,13 @@ public class Sort {
 
         public void reduce(IntWritable key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
-           logger.info("---------reduce阶段--------");
-            logger.info("-------Iterable<IntWritable> values----------"+values);
+            logger.info("----reduce阶段--key----"+key+"");
             for (IntWritable val : values) {
 
                 context.write(linenum, key);
-                logger.info("-----reduce阶段--linenum----------"+linenum+"");
-                logger.info("----reduce阶段--key----"+key+"");
                 linenum = new IntWritable(linenum.get() + 1);
+                logger.info("-----reduce阶段--val----------"+val+"");
+                logger.info("-----reduce阶段--linenum----------"+linenum+"");
 
 
 
