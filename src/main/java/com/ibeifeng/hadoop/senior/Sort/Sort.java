@@ -116,7 +116,7 @@ public class Sort {
             System.exit(2);
 
         }
-
+//这一提交本地可以运行
         Job job = new Job(conf, "Data Sort");
 
         job.setJarByClass(Sort.class);
