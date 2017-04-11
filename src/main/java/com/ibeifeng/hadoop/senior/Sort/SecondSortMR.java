@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * 用途说明：二次排序mapreduce
  * 需求描述:
  * ---------------输入-----------------
- * sort1,1
+ * sort1,joinFile
  * sort2,3
  * sort2,77
  * sort2,54
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * sort6,221
  * sort6,20
  * ---------------目标输出---------------
- * sort1 1,2
+ * sort1 joinFile,2
  * sort2 3,54,77
  * sort6 20,22,221
  */
@@ -81,8 +81,8 @@ public class SecondSortMR extends Configured  implements Tool {
          * 这里要注意一下reduce的调用时机和次数:reduce每处理一个分组的时候会调用一
          * 次reduce函数。也许有人会疑问，分组是什么？看个例子就明白了：
          * eg:
-         * {{sort1,{1,2}},{sort2,{3,54,77}},{sort6,{20,22,221}}}
-         * 这个数据结果是分组过后的数据结构，那么一个分组分别为{sort1,{1,2}}、
+         * {{sort1,{joinFile,2}},{sort2,{3,54,77}},{sort6,{20,22,221}}}
+         * 这个数据结果是分组过后的数据结构，那么一个分组分别为{sort1,{joinFile,2}}、
          * {sort2,{3,54,77}}、{sort6,{20,22,221}}
          */
         @Override

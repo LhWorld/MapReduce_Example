@@ -61,22 +61,12 @@ public class Score {
 
             String line = value.toString();
 
-
+            logger.info("----map阶段--line----"+line+"");
 
             // 将输入的数据首先按行进行分割
 
-            StringTokenizer tokenizerArticle = new StringTokenizer(line, "\n");
 
-            logger.info("----map阶段--tokenizerArticle----"+tokenizerArticle+"");
-
-            // 分别对每一行进行处理
-
-            while (tokenizerArticle.hasMoreElements()) {
-
-                // 每行按空格划分
-
-                StringTokenizer tokenizerLine = new StringTokenizer(tokenizerArticle.nextToken());
-                logger.info("----map阶段空格划分--tokenizerArticle----"+tokenizerArticle+"");
+                StringTokenizer tokenizerLine = new StringTokenizer(line);
 
 
 
@@ -85,9 +75,6 @@ public class Score {
 
                 String strScore = tokenizerLine.nextToken();// 成绩部分
                 logger.info("----map阶段空格划分--strScore----"+strScore+"");
-
-
-
                 Text name = new Text(strName);
 
                 int scoreInt = Integer.parseInt(strScore);
@@ -96,7 +83,7 @@ public class Score {
 
                 context.write(name, new IntWritable(scoreInt));
 
-            }
+
 
         }
 

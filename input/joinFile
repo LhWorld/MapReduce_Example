@@ -1,0 +1,12 @@
+grandchild        grandparent
+Tom            　　Alice
+Tom            　　Jesse
+Jone            　　Alice
+Jone           　　 Jesse
+Tom            　　Mary
+Tom            　　Ben
+Jone           　　 Mary
+Jone           　　 Ben
+Philip          　　  Alice
+Phi Mark           　　 Alice
+Mark           　　 Jesse

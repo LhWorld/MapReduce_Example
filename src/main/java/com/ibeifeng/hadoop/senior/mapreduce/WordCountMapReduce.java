@@ -26,7 +26,7 @@ import org.apache.hadoop.util.ToolRunner;
  */
 public class WordCountMapReduce extends Configured implements Tool{
 
-	// step 1: Map Class
+	// step joinFile: Map Class
 	/**
 	 * 
 	 * public class Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
@@ -91,7 +91,7 @@ public class WordCountMapReduce extends Configured implements Tool{
 	
 	// step 3: Driver ,component job
 	public int run(String[] args) throws Exception {
-		// 1: get confifuration
+		// joinFile: get confifuration
 		Configuration configuration = getConf();
 		
 		// 2: create Job
@@ -102,7 +102,7 @@ public class WordCountMapReduce extends Configured implements Tool{
 		
 		// 3: set job 
 		// input  -> map  -> reduce -> output
-		// 3.1: input
+		// 3.joinFile: input
 		Path inPath = new Path(args[0]);
 		FileInputFormat.addInputPath(job, inPath);
 		
@@ -129,7 +129,7 @@ public class WordCountMapReduce extends Configured implements Tool{
 
 	// step 4: run program
 	public static void main(String[] args) throws Exception {
-		// 1: get confifuration
+		// joinFile: get confifuration
 		Configuration configuration = new Configuration();
 		
 		// int status = new WordCountMapReduce().run(args);

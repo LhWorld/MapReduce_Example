@@ -35,16 +35,16 @@ public class DefinedComparator extends WritableComparator {
             return c1.getSecondKey().get()-c2.getSecondKey().get();//0,负数,正数
         }
         /**
-         * （1）按照上面的这种实现最终的二次排序结果为：
-         * sort1    1,2
+         * （joinFile）按照上面的这种实现最终的二次排序结果为：
+         * sort1    joinFile,2
          * sort2    3,54,77
          * sort6    20,22,221
          * （2）如果实现假设1，则最终的二次排序结果为:
          * sort6    20,22,221
          * sort2    3,54,77
-         * sort1    1,2
+         * sort1    joinFile,2
          * （3）如果实现假设2，则最终的二次排序结果为:
-         * sort1    2,1
+         * sort1    2,joinFile
          * sort2    77,54,3
          * sort6    221,22,20
          */
