@@ -80,6 +80,7 @@ public class InvertedIndex {
                 // 这里为了好看，只获取文件的名称。
 
                 int splitIndex = split.getPath().toString().indexOf("file");
+                logger.info("----map阶段--split.getPath()----"+split.getPath()+"");
                 logger.info("----map阶段--splitIndex----"+splitIndex+"");
 
                 keyInfo.set(itr.nextToken() + ":"
