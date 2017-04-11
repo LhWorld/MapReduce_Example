@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: com.ibeifeng.hadoop.senior.Sort.InvertedIndex
+Main-Class: com.ibeifeng.hadoop.senior.Sort.SecondrySort.SecondrySortR
+ unner
 
