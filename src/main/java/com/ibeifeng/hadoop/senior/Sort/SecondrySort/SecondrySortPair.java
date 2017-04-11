@@ -42,6 +42,7 @@ public class SecondrySortPair implements WritableComparable<SecondrySortPair>{
     //这里的代码是关键，因为对key排序时，调用的就是这个compareTo方法
 
     public int compareTo(SecondrySortPair o) {
+        logger.info("-------自定义Key和排序阶段compareTo--SecondrySortPair----------"+ o+"");
         if (first != o.first) {
             logger.info("-------自定义Key和排序阶段compareTo--o.first----------"+ o.first+"");
             logger.info("-------自定义Key和排序阶段compareTo--first----------"+ first+"");
@@ -64,6 +65,7 @@ public class SecondrySortPair implements WritableComparable<SecondrySortPair>{
     public boolean equals(Object obj) {
         if (obj instanceof SecondrySortPair) {
             SecondrySortPair o = (SecondrySortPair) obj;
+            logger.info("-------自定义Key和排序阶段equals SecondrySortPair----------"+ o+"");
             logger.info("-------自定义Key和排序阶段equals---o.first----------"+ o.first+"");
             logger.info("-------自定义Key和排序阶段equals--first----------"+ first+"");
             logger.info("-------自定义Key和排序阶段equals--o.second----------"+ o.second+"");

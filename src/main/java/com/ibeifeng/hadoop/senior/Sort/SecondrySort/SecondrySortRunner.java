@@ -45,7 +45,7 @@ public class SecondrySortRunner extends Configured implements Tool{
         logger.info("===============进入ReduceOutputValueClass===============");
         job.setOutputValueClass(IntWritable.class);
 
-        FileInputFormat.addInputPath(job, new Path("/SecondSortTest/"));
+        FileInputFormat.addInputPath(job, new Path("/SecondSortTest/secondrysort2.txt"));
         Random random=new Random();
         int r=random.nextInt(100000);
         FileOutputFormat.setOutputPath(job, new Path("/ResultSecondSortTest/"+r+""));
