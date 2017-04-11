@@ -13,6 +13,8 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 public class SecondrySortRunner extends Configured implements Tool{
@@ -31,7 +33,9 @@ public class SecondrySortRunner extends Configured implements Tool{
         job.setMapperClass(SecondrySortMapper.class);
         logger.info("===============进入reduce===============");
         job.setReducerClass(SecondrySortReducer.class);
+        job.setNumReduceTasks(2);
         logger.info("===============进入group===============");
+        job.setPartitionerClass(DefinedPartition.class); //设置自定义分区策略
         //设置分组函数类，对二次排序非常关键。
         job.setGroupingComparatorClass(GroupingComparator.class);
         logger.info("===============进入MapOutputKeyClass===============");
@@ -45,10 +49,15 @@ public class SecondrySortRunner extends Configured implements Tool{
         logger.info("===============进入ReduceOutputValueClass===============");
         job.setOutputValueClass(IntWritable.class);
 
-        FileInputFormat.addInputPath(job, new Path("/SecondSortTest/secondrysort2.txt"));
+        FileInputFormat.addInputPath(job, new Path("/SecondSortTest/*"));
         Random random=new Random();
         int r=random.nextInt(100000);
-        FileOutputFormat.setOutputPath(job, new Path("/ResultSecondSortTest/"+r+""));
+        SimpleDateFormat bartDateFormat = new SimpleDateFormat
+                ("HHmmss");
+        Date date = new Date();
+        System.out.println(bartDateFormat.format(date));
+        FileOutputFormat.setOutputPath(job, new Path("/ResultSecondSort/"+bartDateFormat.format(date).toString()+""));
+
 
         return job.waitForCompletion(true) ? 0:1;
     }
