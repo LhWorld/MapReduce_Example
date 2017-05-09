@@ -1,7 +1,5 @@
 package com.ibeifeng.hadoop.senior.mapreduce;
 
-import java.io.IOException;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -17,22 +15,24 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 /**
  * MapReuce
  * 
  * @author beifeng
  * 
  */
-public class HttpMapReduce extends Configured implements Tool{
+public class DNSMapReduce extends Configured implements Tool{
 
 	// step joinFile: Map Class
 	/**
 	 * 
 	 * public class Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
 	 */
-	public static class HttpMapper extends
+	public static class DNSMapper extends
 			Mapper<LongWritable, Text, Text, Text> {
-		private static final Logger logger = LoggerFactory.getLogger(HttpMapper.class);
+		private static final Logger logger = LoggerFactory.getLogger(DNSMapper.class);
 		private Text mapOutputKey = new Text();
 		private Text mapOutputValue = new Text();
 
@@ -44,9 +44,9 @@ public class HttpMapReduce extends Configured implements Tool{
 
 			      // split
 			       String[] strs = lineValue.split(",");
-			       if (!strs[12].isEmpty()){
+			       if (!strs[24].isEmpty()){
 				// get key
-				 mapOutputKey.set(strs[12]);
+				 mapOutputKey.set(strs[24]);
 				// set value
 			    mapOutputValue.set(strs[0]);
 				// output 
@@ -61,9 +61,9 @@ public class HttpMapReduce extends Configured implements Tool{
 	 * 
 	 * public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	 */
-	public static class HttpReducer extends
+	public static class DNSReducer extends
 			Reducer<Text, Text, Text, Text> {
-		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
+		private static final Logger logger = LoggerFactory.getLogger(DNSReducer.class);
 		private  Text outputValue = new  Text();
 		
 		@Override
@@ -102,12 +102,12 @@ public class HttpMapReduce extends Configured implements Tool{
 		FileInputFormat.addInputPath(job, inPath);
 		
 		// 3.2: map
-		job.setMapperClass(HttpMapper.class);
+		job.setMapperClass(DNSMapper.class);
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
 		
 		// 3.3: reduce
-		job.setReducerClass(HttpReducer.class);
+		job.setReducerClass(DNSReducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
@@ -129,7 +129,7 @@ public class HttpMapReduce extends Configured implements Tool{
 		
 		// int status = new HttpMapReduce().run(args);
 		int status = ToolRunner.run(configuration,//
-				new HttpMapReduce(),//
+				new DNSMapReduce(),//
 				args);
 		
 		System.exit(status);
