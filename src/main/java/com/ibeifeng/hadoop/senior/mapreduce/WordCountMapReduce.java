@@ -102,12 +102,12 @@ public class WordCountMapReduce extends Configured implements Tool{
 		// 3.2: map
 		job.setMapperClass(WordCountMapper.class);
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(IntWritable.class);
+		job.setMapOutputValueClass(Text.class);
 		
 		// 3.3: reduce
 		job.setReducerClass(WordCountReducer.class);
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
+		job.setOutputValueClass(Text.class);
 		
 		// 3.4: output
 		Path outPath = new Path(args[1]);
