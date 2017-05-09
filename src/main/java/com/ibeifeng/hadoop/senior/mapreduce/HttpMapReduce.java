@@ -68,12 +68,13 @@ public class HttpMapReduce extends Configured implements Tool{
 			Reducer<Text, Text, Text, Text> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private  Text outputValue = new  Text();
+		private TreeSet<Text> set=new TreeSet<Text>();
 		
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
 		Context context) throws IOException, InterruptedException {
 			logger.info("----reduce阶段--key----"+key+"");
-			TreeSet<Text> set=new TreeSet<Text>();
+
 				// iterator
 				for(Text value: values){
 					set.add(value);
@@ -85,7 +86,6 @@ public class HttpMapReduce extends Configured implements Tool{
 				// output
 				context.write(key, outputValue);
 			}
-
 		}
 
 	}
