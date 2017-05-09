@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpMapReduce extends Configured implements Tool{
 
+
 	// step joinFile: Map Class
 	/**
 	 * 
@@ -64,27 +65,32 @@ public class HttpMapReduce extends Configured implements Tool{
 	 * public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	 */
 	public static class HttpReducer extends
-			Reducer<Text, Text, Text, Text> {
+			Reducer<Text, Text, CombinationKey, Text> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private  Text outputValue = new  Text();
+		private CombinationKey combinationKey=new CombinationKey();
 
-		
+
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
 		Context context) throws IOException, InterruptedException {
-			 HashMap<Text,IntWritable> map=new HashMap<Text,IntWritable>();
+			HashMap<Text,IntWritable> map=new HashMap<Text,IntWritable>();
+			logger.info("----reduce阶段--map----"+map+"");
 			logger.info("----reduce阶段--key----"+key+"");
 			for(Text value: values){
+
 				if(!map.containsKey(value)){
 					map.put(value,  new IntWritable(1));
 				}
 			}
+			combinationKey.setFirstKey(key);
+			combinationKey.setSecondKey(new IntWritable(map.size()));
 			Iterator<Map.Entry<Text, IntWritable>> it = map.entrySet().iterator();
 		while (it.hasNext()) {
 			          Map.Entry<Text, IntWritable> entry = it.next();
 			logger.info("----reduce阶段--value----"+entry.getKey()+"");
 			outputValue.set(entry.getKey());
-			context.write(key, outputValue);
+			context.write(combinationKey, outputValue);
 		}
 }
 	}
@@ -116,7 +122,7 @@ public class HttpMapReduce extends Configured implements Tool{
 		
 		// 3.3: reduce
 		job.setReducerClass(HttpReducer.class);
-		job.setOutputKeyClass(Text.class);
+		job.setOutputKeyClass(CombinationKey.class);
 		job.setOutputValueClass(Text.class);
 		
 		// 3.4: output
