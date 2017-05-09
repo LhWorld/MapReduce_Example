@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -76,7 +77,7 @@ public class HttpMapReduce extends Configured implements Tool{
 						   Context context) throws IOException, InterruptedException {
 			HashMap<String, IntWritable> map = new HashMap<String, IntWritable>();
 			//CombinationKey combinationKey=new CombinationKey();
-
+            int flag=1;
 			logger.info("----reduce阶段--key----" + key + "");
 			logger.info("----reduce阶段--map----" + map.hashCode() + "");
 			for (Text value : values) {
@@ -94,8 +95,13 @@ public class HttpMapReduce extends Configured implements Tool{
 			while (it.hasNext()) {
 				Map.Entry<String, IntWritable> entry = it.next();
 				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
-				outputValue.set(entry.getKey());
-				context.write(outputKey, outputValue);
+				flag++;
+				if (flag==1) {
+					outputValue.set(entry.getKey());
+					context.write(outputKey, outputValue);
+				}else {
+					context.write(outputKey, outputValue);
+				}
 
 			}
 
