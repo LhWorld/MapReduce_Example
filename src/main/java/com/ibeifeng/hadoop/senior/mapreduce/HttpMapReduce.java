@@ -82,6 +82,7 @@ public class HttpMapReduce extends Configured implements Tool{
 			Iterator<Map.Entry<Text, IntWritable>> it = map.entrySet().iterator();
 		while (it.hasNext()) {
 			          Map.Entry<Text, IntWritable> entry = it.next();
+			logger.info("----reduce阶段--value----"+entry.getKey()+"");
 			outputValue.set(entry.getKey());
 			context.write(key, outputValue);
 		}
