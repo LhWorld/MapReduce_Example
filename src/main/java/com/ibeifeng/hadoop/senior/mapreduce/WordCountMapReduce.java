@@ -32,28 +32,24 @@ public class WordCountMapReduce extends Configured implements Tool{
 	 * public class Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
 	 */
 	public static class WordCountMapper extends
-			Mapper<LongWritable, Text, Text, IntWritable> {
+			Mapper<LongWritable, Text, Text, Text> {
 		private Text mapOutputKey = new Text();
-		private final static IntWritable mapOuputValue = new  IntWritable(1);
+		private Text mapOutputValue = new Text();
 
 		@Override
 		public void map(LongWritable key, Text value, Context context)
 				throws IOException, InterruptedException {
-			// line value
-			String lineValue = value.toString();
-			
-			// split
-			// String[] strs = lineValue.split(" ");
-			StringTokenizer stringTokenizer = new StringTokenizer(lineValue);//默认按照空格换行等分割字符串，并且不消耗内存
-			
-			// iterator
-			while(stringTokenizer.hasMoreTokens()){
-				// get word value
-				String wordValue = stringTokenizer.nextToken();
+			      // line value
+			        String lineValue = value.toString();
+			      // split
+			       String[] strs = lineValue.split(",");
+			       if (strs[11]!=null){
+				// get key
+			     mapOutputKey.set(strs[11]);
 				// set value
-				mapOutputKey.set(wordValue);;
+			    mapOutputValue.set(strs[0]);
 				// output 
-				context.write(mapOutputKey, mapOuputValue);
+				context.write(mapOutputKey, mapOutputValue);
 			}
 		}
 
@@ -65,25 +61,22 @@ public class WordCountMapReduce extends Configured implements Tool{
 	 * public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	 */
 	public static class WordCountReducer extends
-			Reducer<Text, IntWritable, Text, IntWritable> {
+			Reducer<Text, Text, Text, Text> {
 
-		private  IntWritable outputValue = new  IntWritable();
+		private  Text outputValue = new  Text();
 		
 		@Override
-		public void reduce(Text key, Iterable<IntWritable> values,
+		public void reduce(Text key, Iterable<Text> values,
 		Context context) throws IOException, InterruptedException {
-				// sum tmp
-				int sum= 0 ;
-				// iterator
-				for(IntWritable value: values){
-					// total
-					sum += value.get();
-				}
-				// set value
-				outputValue.set(sum);
 
-				// output
-			context.write(key, outputValue);
+				// iterator
+				for(Text value: values){
+					// set value
+					outputValue.set(value);
+					// output
+					context.write(key, outputValue);
+				}
+
 		}
 
 	}
