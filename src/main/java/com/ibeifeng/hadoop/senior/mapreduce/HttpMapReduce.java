@@ -44,9 +44,9 @@ public class HttpMapReduce extends Configured implements Tool{
 			   logger.info("----map阶段--Value----"+lineValue+"");
 			      // split
 			       String[] strs = lineValue.split(",");
-			       if (strs[11]!=null){
+			       if (strs[12]!=null){
 				// get key
-			     mapOutputKey.set(strs[11]);
+			     mapOutputKey.set(strs[12]);
 				// set value
 			    mapOutputValue.set(strs[0]);
 				// output 
