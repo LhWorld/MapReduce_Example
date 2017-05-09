@@ -74,11 +74,18 @@ public class HttpMapReduce extends Configured implements Tool{
 		public void reduce(Text key, Iterable<Text> values,
 		Context context) throws IOException, InterruptedException {
 			logger.info("----reduce阶段--key----"+key+"");
+			for(Text value: values){
+				logger.info("----reduce阶段--value遍历----"+value+"");
+			}
+
 
 				// iterator
 				for(Text value: values){
 					set.add(value);
 				}
+			for(Text value: set){
+				logger.info("----reduce阶段--set遍历----"+value+"");
+			}
 			     for(Text value: set){
 				// set value
 				outputValue.set(value);
