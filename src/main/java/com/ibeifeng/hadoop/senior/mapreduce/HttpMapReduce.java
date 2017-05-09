@@ -65,16 +65,17 @@ public class HttpMapReduce extends Configured implements Tool{
 	 * public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	 */
 	public static class HttpReducer extends
-			Reducer<Text, Text, CombinationKey, Text> {
+			Reducer<Text, Text, Text, Text> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private Text outputValue = new Text();
+		private Text outputKey = new Text();
 
 
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
 						   Context context) throws IOException, InterruptedException {
 			HashMap<String, IntWritable> map = new HashMap<String, IntWritable>();
-			CombinationKey combinationKey=new CombinationKey();
+			//CombinationKey combinationKey=new CombinationKey();
 
 			logger.info("----reduce阶段--key----" + key + "");
 			logger.info("----reduce阶段--map----" + map.hashCode() + "");
@@ -84,16 +85,17 @@ public class HttpMapReduce extends Configured implements Tool{
 				}
 			}
 
-			combinationKey.setFirstKey(key);
-			combinationKey.setSecondKey(new IntWritable(map.size()));
-
+//			combinationKey.setFirstKey(key);
+//			combinationKey.setSecondKey(new IntWritable(map.size()));
+			String combineKey=key.toString()+"----------"+new IntWritable(map.size()).toString();
+			outputKey.set(combineKey);
 			Iterator<Map.Entry<String, IntWritable>> it = map.entrySet().iterator();
 			logger.info("----reduce阶段--map.size----" + map.size() + "");
 			while (it.hasNext()) {
 				Map.Entry<String, IntWritable> entry = it.next();
 				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
 				outputValue.set(entry.getKey());
-				context.write(combinationKey, outputValue);
+				context.write(outputKey, outputValue);
 
 			}
 
@@ -127,7 +129,7 @@ public class HttpMapReduce extends Configured implements Tool{
 
 		// 3.3: reduce
 		job.setReducerClass(HttpReducer.class);
-		job.setOutputKeyClass(CombinationKey.class);
+		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 
 		// 3.4: output
