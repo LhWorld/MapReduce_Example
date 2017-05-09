@@ -57,7 +57,6 @@ public class HttpMapReduce extends Configured implements Tool{
 				context.write(mapOutputKey, mapOutputValue);
 			}
 		}
-
 	}
 
 	// step 2: Reduce Class
@@ -70,7 +69,6 @@ public class HttpMapReduce extends Configured implements Tool{
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private Text outputValue = new Text();
 		private Text outputKey = new Text();
-		int flag=0;
 
 
 		@Override
@@ -78,6 +76,7 @@ public class HttpMapReduce extends Configured implements Tool{
 						   Context context) throws IOException, InterruptedException {
 			HashMap<String, IntWritable> map = new HashMap<String, IntWritable>();
 			//CombinationKey combinationKey=new CombinationKey();
+			int flag=0;
 
 			logger.info("----reduce阶段--key----" + key + "");
 			logger.info("----reduce阶段--map----" + map.hashCode() + "");
@@ -102,7 +101,7 @@ public class HttpMapReduce extends Configured implements Tool{
 					outputValue.set(entry.getKey());
 					context.write(outputKey, outputValue);
 				}else {
-					outputValue.set(entry.getKey());
+					Text outputKey = new Text();
 					context.write(outputKey, outputValue);
 				}
 
