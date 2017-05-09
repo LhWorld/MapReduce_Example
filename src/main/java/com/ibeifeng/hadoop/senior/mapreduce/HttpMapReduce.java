@@ -95,6 +95,7 @@ public class HttpMapReduce extends Configured implements Tool{
 				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
 				flag++;
 				if (flag==1) {
+					logger.info("----reduce阶段FLAG----" + flag + "");
 					String combineKey=key.toString()+"----------"+new IntWritable(map.size()).toString();
 					outputKey.set(combineKey);
 					outputValue.set(entry.getKey());
