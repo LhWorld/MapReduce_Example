@@ -1,6 +1,9 @@
 package com.ibeifeng.hadoop.senior.mapreduce;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeSet;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -70,14 +73,18 @@ public class HttpMapReduce extends Configured implements Tool{
 		public void reduce(Text key, Iterable<Text> values,
 		Context context) throws IOException, InterruptedException {
 			logger.info("----reduce阶段--key----"+key+"");
+			TreeSet<Text> set=new TreeSet<Text>();
 				// iterator
 				for(Text value: values){
-					// set value
-					outputValue.set(value);
-					logger.info("----reduce阶段--value----"+value+"");
-					// output
-					context.write(key, outputValue);
+					set.add(value);
 				}
+			     for(Text value: set){
+				// set value
+				outputValue.set(value);
+				logger.info("----reduce阶段--value----"+value+"");
+				// output
+				context.write(key, outputValue);
+			}
 
 		}
 
