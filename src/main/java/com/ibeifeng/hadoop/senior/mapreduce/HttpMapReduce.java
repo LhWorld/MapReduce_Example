@@ -1,6 +1,7 @@
 package com.ibeifeng.hadoop.senior.mapreduce;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.hadoop.conf.Configuration;
@@ -21,15 +22,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * MapReuce
- * 
+ *
  * @author beifeng
- * 
+ *
  */
 public class HttpMapReduce extends Configured implements Tool{
 
 	// step joinFile: Map Class
 	/**
-	 * 
+	 *
 	 * public class Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
 	 */
 	public static class HttpMapper extends
@@ -41,17 +42,17 @@ public class HttpMapReduce extends Configured implements Tool{
 		@Override
 		public void map(LongWritable key, Text value, Context context)
 				throws IOException, InterruptedException {
-			      // line value
-			        String lineValue = value.toString();
+			// line value
+			String lineValue = value.toString();
 
-			      // split
-			       String[] strs = lineValue.split(",");
-			       if (!strs[12].isEmpty()){
+			// split
+			String[] strs = lineValue.split(",");
+			if (!strs[12].isEmpty()){
 				// get key
-				 mapOutputKey.set(strs[12]);
+				mapOutputKey.set(strs[12]);
 				// set value
-			    mapOutputValue.set(strs[0]);
-				// output 
+				mapOutputValue.set(strs[0]);
+				// output
 				context.write(mapOutputKey, mapOutputValue);
 			}
 		}
@@ -60,86 +61,116 @@ public class HttpMapReduce extends Configured implements Tool{
 
 	// step 2: Reduce Class
 	/**
-	 * 
+	 *
 	 * public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	 */
 	public static class HttpReducer extends
 			Reducer<Text, Text, Text, Text> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
-		private  Text outputValue = new  Text();
+		private Text outputValue = new Text();
+		HashMap<Text, IntWritable> mapBig = new HashMap<Text, IntWritable>();
 
-		
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
-		Context context) throws IOException, InterruptedException {
-			 HashMap<Text,IntWritable> map=new HashMap<Text,IntWritable>();
-			logger.info("----reduce阶段--key----"+key+"");
-			for(Text value: values){
-				if(!map.containsKey(value)){
-					map.put(value,  new IntWritable(1));
+						   Context context) throws IOException, InterruptedException {
+			HashMap<Text, IntWritable> map = new HashMap<Text, IntWritable>();
+
+			logger.info("----reduce阶段--key----" + key + "");
+			logger.info("----reduce阶段--map----" + map.hashCode() + "");
+			for (Text value : values) {
+				if (!map.containsKey(value)) {
+					map.put(value, new IntWritable(1));
+				}
+			}
+			for (Text value : values) {
+				if (!mapBig.containsKey(value)) {
+					mapBig.put(value, new IntWritable(1));
 				}
 			}
 			Iterator<Map.Entry<Text, IntWritable>> it = map.entrySet().iterator();
-		while (it.hasNext()) {
-			          Map.Entry<Text, IntWritable> entry = it.next();
-			logger.info("----reduce阶段--value----"+entry.getKey()+"");
-			outputValue.set(entry.getKey());
-			context.write(key, outputValue);
+			logger.info("----reduce阶段--map.size----" + map.size() + "");
+			while (it.hasNext()) {
+				Map.Entry<Text, IntWritable> entry = it.next();
+				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
+				outputValue.set(entry.getKey());
+				context.write(key, outputValue);
+
+			}
+			Iterator<Map.Entry<Text, IntWritable>> itBig = map.entrySet().iterator();
+			logger.info("----reduce阶段--map.size----" + map.size() + "");
+			while (it.hasNext()) {
+				Map.Entry<Text, IntWritable> entryBig = it.next();
+				logger.info("----reduce阶段--entryBig---" + entryBig.getKey() + "");
+
+			}
 		}
-}
+
+
 	}
 
-
-
-	
 	// step 3: Driver ,component job
 	public int run(String[] args) throws Exception {
 		// joinFile: get confifuration
 		Configuration configuration = getConf();
-		
+
 		// 2: create Job
 		Job job = Job.getInstance(configuration, //
 				this.getClass().getSimpleName());
-		// run jar 
+		// run jar
 		job.setJarByClass(this.getClass());
-		
-		// 3: set job 
+
+		// 3: set job
 		// input  -> map  -> reduce -> output
 		// 3.joinFile: input
-		Path inPath = new Path(args[0]);
+		Path inPath = new Path("/http/*");
+
 		FileInputFormat.addInputPath(job, inPath);
-		
+
 		// 3.2: map
 		job.setMapperClass(HttpMapper.class);
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
-		
+
 		// 3.3: reduce
 		job.setReducerClass(HttpReducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
-		
+
 		// 3.4: output
-		Path outPath = new Path(args[1]);
-		FileOutputFormat.setOutputPath(job, outPath);
-		
+//		Path outPath = new Path(args[1]);
+//		FileOutputFormat.setOutputPath(job, outPath);
+		Random random=new Random();
+		int r=random.nextInt(100000);
+		SimpleDateFormat bartDateFormat = new SimpleDateFormat
+				("HHmmss");
+		Date date = new Date();
+		System.out.println(bartDateFormat.format(date));
+		FileOutputFormat.setOutputPath(job, new Path("/Result/"+bartDateFormat.format(date).toString()+""));
+
 		// 4: submit job
 		boolean isSuccess = job.waitForCompletion(true);
-		
+
 		return isSuccess ? 0 : 1 ;
-		
+
 	}
 
 	// step 4: run program
 	public static void main(String[] args) throws Exception {
 		// joinFile: get confifuration
-		Configuration configuration = new Configuration();
-		
+
+		Configuration conf = new Configuration();
+		conf.set("fs.defaultFS", "hdfs://lihu");
+		conf.set("mapreduce.framework.name", "yarn");
+		conf.set("ha.zookeeper.quorum", "node1:2181,node2:2181,node3:2181");
+		conf.set("yarn.resourcemanager.address", "node2:8032");
+		conf.set("mapred.jar", "D:\\stormAction\\HDFS\\classes\\artifacts\\beifeng_hdfs_jar\\beifeng-hdfs.jar");
+		conf.set("mapreduce.app-submission.cross-platform", "true");
+
 		// int status = new HttpMapReduce().run(args);
-		int status = ToolRunner.run(configuration,//
+		int status = ToolRunner.run(conf,//
 				new HttpMapReduce(),//
 				args);
-		
+
 		System.exit(status);
 	}
 
