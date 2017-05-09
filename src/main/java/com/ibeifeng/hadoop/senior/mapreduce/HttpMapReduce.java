@@ -18,6 +18,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,25 +71,22 @@ public class HttpMapReduce extends Configured implements Tool{
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private Text outputValue = new Text();
 		private Text outputKey = new Text();
-		int flag=0;
+
 
 
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
 						   Context context) throws IOException, InterruptedException {
 			HashMap<String, IntWritable> map = new HashMap<String, IntWritable>();
-			//CombinationKey combinationKey=new CombinationKey();
-
+			int  flag=0;
 			logger.info("----reduce阶段--key----" + key + "");
-			logger.info("----reduce阶段--map----" + map.hashCode() + "");
 			for (Text value : values) {
+				logger.info("----reduce阶段--value----" + value + "");
 				if (!map.containsKey(value.toString())) {
 					map.put(value.toString(), new IntWritable(1));
 				}
 			}
 
-//			combinationKey.setFirstKey(key);
-//			combinationKey.setSecondKey(new IntWritable(map.size()));
 			Iterator<Map.Entry<String, IntWritable>> it = map.entrySet().iterator();
 			logger.info("----reduce阶段--map.size----" + map.size() + "");
 			while (it.hasNext()) {
@@ -96,12 +94,12 @@ public class HttpMapReduce extends Configured implements Tool{
 				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
 				flag++;
 				if (flag==1) {
-					logger.info("----reduce阶段FLAG----" + flag + "");
 					String combineKey=key.toString()+"----------"+new IntWritable(map.size()).toString();
 					outputKey.set(combineKey);
 					outputValue.set(entry.getKey());
 					context.write(outputKey, outputValue);
 				}else {
+					Text outputKey = new Text();
 					outputValue.set(entry.getKey());
 					context.write(outputKey, outputValue);
 				}
