@@ -68,12 +68,13 @@ public class HttpMapReduce extends Configured implements Tool{
 			Reducer<Text, Text, CombinationKey, Text> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private Text outputValue = new Text();
-		CombinationKey combinationKey=new CombinationKey();
+
 
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
 						   Context context) throws IOException, InterruptedException {
 			HashMap<String, IntWritable> map = new HashMap<String, IntWritable>();
+			CombinationKey combinationKey=new CombinationKey();
 
 			logger.info("----reduce阶段--key----" + key + "");
 			logger.info("----reduce阶段--map----" + map.hashCode() + "");
