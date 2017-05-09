@@ -88,8 +88,6 @@ public class HttpMapReduce extends Configured implements Tool{
 
 //			combinationKey.setFirstKey(key);
 //			combinationKey.setSecondKey(new IntWritable(map.size()));
-			String combineKey=key.toString()+"----------"+new IntWritable(map.size()).toString();
-			outputKey.set(combineKey);
 			Iterator<Map.Entry<String, IntWritable>> it = map.entrySet().iterator();
 			logger.info("----reduce阶段--map.size----" + map.size() + "");
 			while (it.hasNext()) {
@@ -97,9 +95,12 @@ public class HttpMapReduce extends Configured implements Tool{
 				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
 				flag++;
 				if (flag==1) {
+					String combineKey=key.toString()+"----------"+new IntWritable(map.size()).toString();
+					outputKey.set(combineKey);
 					outputValue.set(entry.getKey());
 					context.write(outputKey, outputValue);
 				}else {
+					outputValue.set(entry.getKey());
 					context.write(outputKey, outputValue);
 				}
 
