@@ -1,18 +1,14 @@
 package com.ibeifeng.hadoop.senior.mapreduce;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
-import com.ibeifeng.hadoop.senior.Sort.SecondSortMR;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -27,16 +23,16 @@ import org.slf4j.LoggerFactory;
  * @author beifeng
  * 
  */
-public class WordCountMapReduce extends Configured implements Tool{
+public class HttpMapReduce extends Configured implements Tool{
 
 	// step joinFile: Map Class
 	/**
 	 * 
 	 * public class Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
 	 */
-	public static class WordCountMapper extends
+	public static class HttpMapper extends
 			Mapper<LongWritable, Text, Text, Text> {
-		private static final Logger logger = LoggerFactory.getLogger(WordCountMapper.class);
+		private static final Logger logger = LoggerFactory.getLogger(HttpMapper.class);
 		private Text mapOutputKey = new Text();
 		private Text mapOutputValue = new Text();
 
@@ -65,7 +61,7 @@ public class WordCountMapReduce extends Configured implements Tool{
 	 * 
 	 * public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	 */
-	public static class WordCountReducer extends
+	public static class HttpReducer extends
 			Reducer<Text, Text, Text, Text> {
 
 		private  Text outputValue = new  Text();
@@ -105,12 +101,12 @@ public class WordCountMapReduce extends Configured implements Tool{
 		FileInputFormat.addInputPath(job, inPath);
 		
 		// 3.2: map
-		job.setMapperClass(WordCountMapper.class);
+		job.setMapperClass(HttpMapper.class);
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
 		
 		// 3.3: reduce
-		job.setReducerClass(WordCountReducer.class);
+		job.setReducerClass(HttpReducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 		
@@ -130,9 +126,9 @@ public class WordCountMapReduce extends Configured implements Tool{
 		// joinFile: get confifuration
 		Configuration configuration = new Configuration();
 		
-		// int status = new WordCountMapReduce().run(args);
+		// int status = new HttpMapReduce().run(args);
 		int status = ToolRunner.run(configuration,//
-				new WordCountMapReduce(),//
+				new HttpMapReduce(),//
 				args);
 		
 		System.exit(status);
