@@ -1,13 +1,12 @@
 package com.ibeifeng.hadoop.senior.mapreduce;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -68,34 +67,27 @@ public class HttpMapReduce extends Configured implements Tool{
 			Reducer<Text, Text, Text, Text> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private  Text outputValue = new  Text();
-		private TreeSet<Text> set=new TreeSet<Text>();
+		private  HashMap<Text,IntWritable> map=new HashMap<Text,IntWritable>();
 		
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
 		Context context) throws IOException, InterruptedException {
 			logger.info("----reduce阶段--key----"+key+"");
 			for(Text value: values){
-				logger.info("----reduce阶段--value遍历----"+value+"");
-			}
-
-
-				// iterator
-				for(Text value: values){
-					set.add(value);
+				if(!map.containsKey(value)){
+					map.put(value,  new IntWritable(1));
 				}
-			for(Text value: set){
-				logger.info("----reduce阶段--set遍历----"+value+"");
 			}
-			     for(Text value: set){
-				// set value
-				outputValue.set(value);
-				logger.info("----reduce阶段--value----"+value+"");
-				// output
-				context.write(key, outputValue);
-			}
+			Iterator<Map.Entry<Text, IntWritable>> it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			          Map.Entry<Text, IntWritable> entry = it.next();
+			outputValue.set(entry.getKey());
+			context.write(key, outputValue);
 		}
-
+}
 	}
+
+
 
 	
 	// step 3: Driver ,component job
