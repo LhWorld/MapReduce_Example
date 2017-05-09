@@ -77,7 +77,7 @@ public class HttpMapReduce extends Configured implements Tool{
 						   Context context) throws IOException, InterruptedException {
 			HashMap<String, IntWritable> map = new HashMap<String, IntWritable>();
 			//CombinationKey combinationKey=new CombinationKey();
-            int flag=1;
+            int flag=0;
 			logger.info("----reduce阶段--key----" + key + "");
 			logger.info("----reduce阶段--map----" + map.hashCode() + "");
 			for (Text value : values) {
