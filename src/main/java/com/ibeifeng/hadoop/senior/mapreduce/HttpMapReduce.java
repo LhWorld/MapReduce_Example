@@ -68,45 +68,34 @@ public class HttpMapReduce extends Configured implements Tool{
 			Reducer<Text, Text, CombinationKey, Text> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private Text outputValue = new Text();
-		HashMap<Text, IntWritable> mapBig = new HashMap<Text, IntWritable>();
 		CombinationKey combinationKey=new CombinationKey();
 
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
 						   Context context) throws IOException, InterruptedException {
-			HashMap<Text, IntWritable> map = new HashMap<Text, IntWritable>();
+			HashMap<String, IntWritable> map = new HashMap<String, IntWritable>();
 
 			logger.info("----reduce阶段--key----" + key + "");
 			logger.info("----reduce阶段--map----" + map.hashCode() + "");
 			for (Text value : values) {
-				if (!map.containsKey(value)) {
-					map.put(value, new IntWritable(1));
+				if (!map.containsKey(value.toString())) {
+					map.put(value.toString(), new IntWritable(1));
 				}
 			}
-			for (Text value : values) {
-				if (!mapBig.containsKey(value)) {
-					mapBig.put(value, new IntWritable(1));
-				}
-			}
+
 			combinationKey.setFirstKey(key);
 			combinationKey.setSecondKey(new IntWritable(map.size()));
 
-			Iterator<Map.Entry<Text, IntWritable>> it = map.entrySet().iterator();
+			Iterator<Map.Entry<String, IntWritable>> it = map.entrySet().iterator();
 			logger.info("----reduce阶段--map.size----" + map.size() + "");
 			while (it.hasNext()) {
-				Map.Entry<Text, IntWritable> entry = it.next();
+				Map.Entry<String, IntWritable> entry = it.next();
 				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
 				outputValue.set(entry.getKey());
 				context.write(combinationKey, outputValue);
 
 			}
-			Iterator<Map.Entry<Text, IntWritable>> itBig = map.entrySet().iterator();
-			logger.info("----reduce阶段--map.size----" + map.size() + "");
-			while (it.hasNext()) {
-				Map.Entry<Text, IntWritable> entryBig = it.next();
-				logger.info("----reduce阶段--entryBig---" + entryBig.getKey() + "");
 
-			}
 		}
 
 
