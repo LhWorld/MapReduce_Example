@@ -3,6 +3,7 @@ package com.ibeifeng.hadoop.senior.mapreduce;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import com.ibeifeng.hadoop.senior.Sort.SecondSortMR;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -17,6 +18,8 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * MapReuce
@@ -33,6 +36,7 @@ public class WordCountMapReduce extends Configured implements Tool{
 	 */
 	public static class WordCountMapper extends
 			Mapper<LongWritable, Text, Text, Text> {
+		private static final Logger logger = LoggerFactory.getLogger(WordCountMapper.class);
 		private Text mapOutputKey = new Text();
 		private Text mapOutputValue = new Text();
 
@@ -41,6 +45,7 @@ public class WordCountMapReduce extends Configured implements Tool{
 				throws IOException, InterruptedException {
 			      // line value
 			        String lineValue = value.toString();
+			   logger.info("----map阶段--Value----"+lineValue+"");
 			      // split
 			       String[] strs = lineValue.split(",");
 			       if (strs[11]!=null){
