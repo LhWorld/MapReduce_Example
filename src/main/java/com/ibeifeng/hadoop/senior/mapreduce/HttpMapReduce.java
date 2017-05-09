@@ -65,10 +65,11 @@ public class HttpMapReduce extends Configured implements Tool{
 	 * public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	 */
 	public static class HttpReducer extends
-			Reducer<Text, Text, Text, Text> {
+			Reducer<Text, Text, CombinationKey, Text> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
 		private Text outputValue = new Text();
 		HashMap<Text, IntWritable> mapBig = new HashMap<Text, IntWritable>();
+		CombinationKey combinationKey=new CombinationKey();
 
 		@Override
 		public void reduce(Text key, Iterable<Text> values,
@@ -87,13 +88,16 @@ public class HttpMapReduce extends Configured implements Tool{
 					mapBig.put(value, new IntWritable(1));
 				}
 			}
+			combinationKey.setFirstKey(key);
+			combinationKey.setSecondKey(new IntWritable(map.size()));
+
 			Iterator<Map.Entry<Text, IntWritable>> it = map.entrySet().iterator();
 			logger.info("----reduce阶段--map.size----" + map.size() + "");
 			while (it.hasNext()) {
 				Map.Entry<Text, IntWritable> entry = it.next();
 				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
 				outputValue.set(entry.getKey());
-				context.write(key, outputValue);
+				context.write(combinationKey, outputValue);
 
 			}
 			Iterator<Map.Entry<Text, IntWritable>> itBig = map.entrySet().iterator();
@@ -133,7 +137,7 @@ public class HttpMapReduce extends Configured implements Tool{
 
 		// 3.3: reduce
 		job.setReducerClass(HttpReducer.class);
-		job.setOutputKeyClass(Text.class);
+		job.setOutputKeyClass(CombinationKey.class);
 		job.setOutputValueClass(Text.class);
 
 		// 3.4: output
