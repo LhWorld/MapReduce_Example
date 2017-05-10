@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.apache.avro.reflect.Nullable;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -67,10 +68,10 @@ public class HttpMapReduce extends Configured implements Tool{
 	 * public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	 */
 	public static class HttpReducer extends
-			Reducer<Text, Text, Text, Text> {
+			Reducer<Text, Text, Text, IntWritable> {
 		private static final Logger logger = LoggerFactory.getLogger(HttpReducer.class);
-		private Text outputValue = new Text();
 		private Text outputKey = new Text();
+		private IntWritable outputValue = new IntWritable();
 
 
 
@@ -86,25 +87,31 @@ public class HttpMapReduce extends Configured implements Tool{
 					map.put(value.toString(), new IntWritable(1));
 				}
 			}
-
-			Iterator<Map.Entry<String, IntWritable>> it = map.entrySet().iterator();
-			logger.info("----reduce阶段--map.size----" + map.size() + "");
-			while (it.hasNext()) {
-				Map.Entry<String, IntWritable> entry = it.next();
-				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
-				flag++;
-				if (flag==1) {
-					String combineKey=key.toString()+"----------"+new IntWritable(map.size()).toString();
-					outputKey.set(combineKey);
-					outputValue.set(entry.getKey());
-					context.write(outputKey, outputValue);
-				}else {
-					Text outputKey = new Text();
-					outputValue.set(entry.getKey());
-					context.write(outputKey, outputValue);
-				}
-
-			}
+			//String combineKey=key.toString()+"----------"+new IntWritable(map.size()).toString();
+			 outputKey.set(key);
+			 outputValue.set(map.size());
+			 context.write(outputKey,outputValue);
+//			StringBuffer temp=new StringBuffer();
+//			Iterator<Map.Entry<String, IntWritable>> it = map.entrySet().iterator();
+//			logger.info("----reduce阶段--map.size----" + map.size() + "");
+//			while (it.hasNext()) {
+//				Map.Entry<String, IntWritable> entry = it.next();
+//				logger.info("----reduce阶段--entry.getKey()----" + entry.getKey() + "");
+//				flag++;
+//				if (flag==1) {
+//					String combineKey=key.toString()+"----------"+new IntWritable(map.size()).toString();
+//					outputKey.set(combineKey);
+//					outputValue.set(entry.getKey());
+//					temp.append(outputValue+";");
+//					context.write(outputKey, outputValue);
+//				}else {
+//					Text outputKey = new Text();
+//					outputValue.set(entry.getKey());
+//					temp.append(outputValue+";");
+//					context.write(outputKey, new Text(temp.toString()));
+//				}
+//
+//			}
 
 		}
 
@@ -121,6 +128,7 @@ public class HttpMapReduce extends Configured implements Tool{
 				this.getClass().getSimpleName());
 		// run jar
 		job.setJarByClass(this.getClass());
+		job.setOutputFormatClass(MyOutputFormat.class);
 
 		// 3: set job
 		// input  -> map  -> reduce -> output
