@@ -133,7 +133,7 @@ public class HttpMapReduce extends Configured implements Tool{
 		// 3: set job
 		// input  -> map  -> reduce -> output
 		// 3.joinFile: input
-		Path inPath = new Path("/http/*");
+		Path inPath = new Path("/shuju/*");
 
 		FileInputFormat.addInputPath(job, inPath);
 
